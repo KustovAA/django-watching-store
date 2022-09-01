@@ -1,3 +1,4 @@
+from email.policy import default
 import os
 from environs import Env
 
@@ -6,7 +7,7 @@ env.read_env()
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': env.str('DB_ENGINE'),
         'HOST': env.str('DB_HOST'),
         'PORT': env.int('DB_PORT'),
         'NAME': env.str('DB_NAME'),
@@ -17,14 +18,13 @@ DATABASES = {
 
 INSTALLED_APPS = ['datacenter']
 
-SECRET_KEY = 'REPLACE_ME'
+SECRET_KEY = env.str('SECRET_KEY', validate=lambda key: key != '' and key is not None)
 
-DEBUG = env.bool('DEBUG')
+DEBUG = env.bool('DEBUG', default=False)
 
 ROOT_URLCONF = 'project.urls'
 
-ALLOWED_HOSTS = ['*']
-
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost'])
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATES = [
